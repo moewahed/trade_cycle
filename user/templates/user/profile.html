@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    {{ user.get_full_name }} - Trade Cycle
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row my-2">
+            <div class="col-lg-8 order-lg-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a href="" data-target="#profile" data-toggle="tab" class="nav-link active">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="" data-target="#profileImage" data-toggle="tab" class="nav-link">Edit Images</a>
+                    </li>
+
+                </ul>
+                <div class="tab-content py-4">
+                    <div class="tab-pane active" id="profile">
+                        <h5 class="mb-3">User Profile</h5>
+                        {% for obj in request.user.blog.all %}
+                            {% if obj.user == user %}
+                                <a href="{% url 'blog:blog_details' obj.id %}">
+                                    <div class="card mb-3" style="max-width: 540px;">
+                                        <div class="row no-gutters">
+                                            <div class="col-md-4">
+
+                                                {% for inner_obj in obj.blog_image.all %}
+
+                                                    <img src="{{ inner_obj.image.url }}" class="card-img" alt="...">
+
+                                                {% endfor %}
+
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="card-body">
+                                                    <p class="card-text">{{ obj.content }}</p>
+                                                    <p class="card-text">
+                                                        <small class="text-muted">{{ obj.create_at|timesince }}</small>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="tab-pane" id="profileImage">
+                        <form action="{% url 'user:avatar_change' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ avatar_form }}
+                            <button type="submit" class="btn btn-primary">Change Avatar</button>
+                        </form>
+                        <hr>
+                        <form action="{% url 'user:cover_change' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ cover_form }}
+                            <button type="submit" class="btn btn-primary">Change Cover</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <div style="background-image: url({{ user.cover_pic.url }}); background-position: center;background-repeat: no-repeat; background-size: cover"
+                     class="w-100 px-4 pt-4 border">
+                    <img src="{{ user.profile_pic.url }}" width="125" height="125"
+                         class="mx-auto img-circle d-block rounded-top" alt="avatar">
+                </div>
+
+                <h4 class="mt-2">{{ user.get_full_name }}</h4>
+                <h6 class="mt-2 text-muted">@{{ user.username }}</h6>
+            </div>
+        </div>
+    </div>
+{% endblock %}

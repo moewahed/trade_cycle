@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Registration Page - Trade Cycle
+{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row justify-content-center">
+            <div class="col-6">
+                <h1>Registration</h1>
+                <hr>
+                <form action="{% url 'user:register_page' %}" method="post">
+                    {% csrf_token %}
+                    {% for field in register_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            <div class="controls">
+                                {{ field }}
+                            </div>
+                            {% if field.help_text %}
+                                <small class="text-muted">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <br>
+                                {% for error in field.errors %}
+                                    <small style="color: red;">{{ error|escape }}</small>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <button class="btn btn-primary">Create Account</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Trades - Trade Cycle
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <a class="" href="{% url 'trade:new_item' %}">
+                    <i class="fas fa-plus-square p-2" style='font-size: 50px;'></i>
+                    <p>Add New Item</p>
+                </a>
+                <hr>
+            </div>
+            {% for item in items %}
+
+                <div class="col-12 border my-2">
+                    <div class="blog-header">
+                        <div class="blog-author--no-cover">
+                            <h3>
+                                <img src="{{ item.user.profile_pic.url }}" width="64" height="64" class="rounded-circle border" alt="">
+                                <a href="{% url 'user:profile_page' item.user.id %}">{{ item.user.get_full_name }}</a>
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="blog-body">
+                        <h3 class="blog-title">{{ item.name }}</h3>
+                        <div class="blog-summary">
+                            <p>{{ item.desc }}</p>
+                        </div>
+                        {% if item.item_image.all.first.image %}
+                            <img class="card-img" height="250" width="200"
+                                 src="{{ item.item_image.all.first.image.url }}">
+
+                        {% endif %}
+                    </div>
+                    <div class="blog-footer mt-2">
+                        <ul class="pt-2">
+                            <li class="">
+                                <span class="published-date">{{ item.create_at|timesince }}</span>
+                                <span class="published-date bg-warning text-dark">{{ item.get_category }}</span>
+                            </li>
+                            {% if not request.user == item.user %}
+                                <li class="">
+                                    <a class="btn btn-outline-primary" href="{% url 'trade:request_item' item.id %}">
+                                        Offer Trade Request
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

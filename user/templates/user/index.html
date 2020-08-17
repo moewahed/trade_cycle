@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    Blog - Trade Cycle
+{% endblock %}
+
+{% block content %}
+    <div class="container my-3">
+        <div class="row">
+            <div class="col-8">
+                <div class="col-12 card p-4 rounded-0">
+                    <form action="{% url 'blog:new_blog' %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <h3>Add new Blog</h3>
+                        {{ blog_form.content }}
+                        {{ image_form.image }}
+                        <button class="btn btn-secondary" type="submit">Add New Blog</button>
+                    </form>
+                </div>
+                {% for blog in blogs %}
+                    <style>
+                        .blog-author h3::before,
+                        .blog-author--no-cover h3::before {
+                            background: url({{ blog.user.profile_pic.url }});
+                            background-size: cover;
+                            border-radius: 50%;
+                            content: " ";
+                            display: inline-block;
+                            height: 32px;
+                            margin-right: .5rem;
+                            position: relative;
+                            top: 8px;
+                            width: 32px;
+                        }
+                    </style>
+                    <div class="col-12 border my-2">
+                        <div class="blog-header">
+                            <div class="blog-author--no-cover">
+                                <h3>
+                                    <a href="{% url 'user:profile_page' blog.user.id %}">{{ blog.user.get_full_name }}</a>
+                                </h3>
+                            </div>
+                        </div>
+                        <div class="blog-body">
+                            {% if blog.blog_image.all.first.image %}
+                                <img class="card-img" height="250" width="200"
+                                     src="{{ blog.blog_image.all.first.image.url }}">
+
+                            {% endif %}
+
+                            <div class="blog-summary">
+                                <p>{{ blog.content }}</p>
+                            </div>
+                        </div>
+                        <div class="blog-footer">
+                            <ul>
+                                <li class="published-date">{{ blog.create_at|timesince }}</li>
+                                <li class="comments">
+                                    <a href="{% url 'blog:blog_details' blog.id %}">
+                                        <i class="fas fa-comment"></i>
+                                        <span class="numero">{{ blog.comment.all.count }}</span>
+                                    </a>
+                                </li>
+                                <li class="shares">
+                                    <a href="">
+                                        <i class="fas fa-star"></i>
+                                        <span class="numero">6</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        <div class="col-4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12"></div>
+                    <div class="col-md-12">
+                        <div class="sidebar widget">
+                            <h4>Recent Commented Post</h4>
+                            <ul>
+                                {% for recent_blog in recent_blogs %}
+                                    <li>
+                                        <div class="sidebar-thumb">
+                                            <img class="animated rollIn"
+                                                 src="{{ recent_blog.user.profile_pic.url }}"
+                                                 alt=""/>
+                                        </div>
+                                        <div class="sidebar-content">
+                                            <h5 class="animated bounceInRight">
+                                                <a href="#">
+                                                    {{ recent_blog.comment|truncatechars:"14" }}
+                                                </a>
+                                            </h5>
+                                        </div>
+                                        <div class="sidebar-meta">
+                                            <span class="time"><i class="fa fa-clock-o"></i> {{ recent_blog.create_at }}</span>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}

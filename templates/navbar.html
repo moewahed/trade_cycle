@@ -1,0 +1,149 @@
+<nav class="navbar navbar-expand-md bg-dark navbar-dark mt-0">
+    {#    <a class="navbar-brand" href="#">Trade Cycle</a>#}
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link bg-secondary rounded text-white px-5 mx-2" href="{% url 'user:home_page' %}">
+                    <i class="fas fa-home"></i> <span class="sr-only">(home)</span>
+                </a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link bg-secondary rounded text-white px-5 mx-2" href="{% url 'trade:trade_home' %}">
+                    <i class="fas fa-store"></i> <span class="sr-only">(trade)</span>
+                </a>
+            </li>
+        </ul>
+
+        <ul class="d-flex align-items-center navbar-nav ml-auto">
+
+            {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="d-flex align-items-center nav-link rounded-pill text-white px-4"
+                       href="{% url 'user:profile_page' request.user.id %}">
+                        <img class="rounded-circle" style="width: 32px; height: 32px;"
+                             src="{{ request.user.profile_pic.url }}" alt="">
+                        &nbsp;{{ request.user.get_short_name }}
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link bg-secondary rounded-circle text-white mx-1 px-3 py-2"
+                       href="" id="notificationDropDown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        <i class="fas fa-bell red-to-white"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mt-2 " style="width: 300px"
+                         aria-labelledby="notificationDropDown">
+                        <style>
+                            .red-to-white {
+                                color: white;
+                            }
+                        </style>
+                        {% if request.user.notified.all %}
+                            {% for notification in request.user.notified.all %}
+
+                                {% if not notification.request.status %}
+                                    <a href="{% url 'trade:request_status' notification.request.id %}"
+                                       class="top-text-block">
+                                        <div class="top-text-heading">
+                                            {{ notification.request }}
+                                        </div>
+                                        <div class="top-text-light">{{ notification.create_at|timesince }}</div>
+                                    </a>
+                                {% else %}
+                                    {% if notification.request.user == request.user %}
+                                        <a href=""
+                                           class="top-text-block">
+                                            <div class="top-text-heading">
+                                                {{ notification.request.requested_item.user.get_short_name }}
+                                                have {{ notification.request.status }} Your request to
+                                                trade {{ notification.request.requested_item.name }}
+                                                with {{ notification.request.offered_item.name }}
+                                            </div>
+                                            <div class="top-text-light">{{ notification.create_at|timesince }}</div>
+                                        </a>
+                                        <hr>
+
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if not notification.request.status %}
+                                    <style>
+                                        .red-to-white {
+                                            color: red !important;
+                                        }
+                                    </style>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <p class="p-2">There is notifications yet</p>
+                        {% endif %}
+
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link bg-secondary rounded-circle text-white mx-1 px-3 py-2"
+                       href="" id="settingDropDown" role="button" data-toggle="dropdown" aria-haspopup="true"
+                       aria-expanded="false">
+                        <i class="fas fa-chevron-down"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mt-2" aria-labelledby="settingDropDown">
+                        <a class="dropdown-item" href="#">Profile Information</a>
+                        <a class="dropdown-item" href="#">Update Password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'user:logout_function' %}">Logout</a>
+                    </div>
+                </li>
+            {% else %}
+                <li class="nav-item active">
+                    <a class="nav-link bg-primary rounded text-white px-2 rounded-0"
+                       href="{% url 'user:login_page' %}">
+                        <i class="fas fa-key"></i> Login <span class="sr-only">(login)</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link bg-primary rounded text-white px-2 rounded-0"
+                       href="{% url 'user:register_page' %}">
+                        <i class="fas fa-user-plus"></i> Register <span class="sr-only">(register)</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+        <style>
+            .search-bar {
+                width: 50px;
+                box-sizing: border-box;
+                border: 2px solid #ccc;
+                border-radius: 4px;
+                font-size: 16px;
+                background-color: white;
+                background-image: url('https://www.w3schools.com/howto/searchicon.png');
+                background-position: 12px 12px;
+                background-repeat: no-repeat;
+
+                -webkit-transition: width 0.4s ease-in;
+                transition: width 0.4s ease-in;
+            }
+
+            .search-bar:focus {
+                width: 100%;
+                border-radius: 0 !important;
+                background-position: 12px 12px;
+                padding: 10px 18px 10px 40px !important;
+            }
+        </style>
+        {% if request.user.is_authenticated %}
+            <form class="form-inline position-relative my-2 my-lg-0">
+                <input class="search-bar rounded-circle mx-1 py-2 pl-4 pr-4" type="search" placeholder="Search"
+                       aria-label="Search">
+            </form>
+        {% endif %}
+    </div>
+</nav>

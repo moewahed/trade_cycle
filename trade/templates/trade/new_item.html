@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}
+     Add New Trade Item - Trade Cycle
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <h1>Add new Item to Trade</h1>
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% for field in item_form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+                            <div class="controls">
+                                {{ field }}
+                            </div>
+                            {% if field.help_text %}
+                                <small class="text-muted">{{ field.help_text|safe }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <br>
+                                {% for error in field.errors %}
+                                    <small style="color: red;">{{ error|escape }}</small>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="id_image">Upload photo for item:</label>
+                        {{ image_item_form.image }}
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-success">Add New Item</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

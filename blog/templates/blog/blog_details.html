@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    Blog By {{ blog.user.get_full_name }}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <p class="lead">
+                    by
+                    <a href="{% url 'user:profile_page' blog.user.id %}">{{ blog.user.get_full_name }}</a>
+                </p>
+                <hr>
+                <p>Posted on {{ blog.create_at }}</p>
+                <hr>
+                {% for obj in blog.blog_image.all %}
+                    <img class="img-fluid rounded" src="{{ obj.image.url }}" alt="">
+                {% endfor %}
+                <hr>
+                <p>{{ blog.content }}</p>
+                <hr>
+
+                <!-- Comments Form -->
+                <div class="card my-4">
+                    <h5 class="card-header">Leave a Comment:</h5>
+                    <div class="card-body">
+                        <form action="{% url 'blog:new_comment' blog.id %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                {{ comment_form }}
+                                {{ image_comment_form.image }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Single Comment -->
+                {% for obj in blog.comment.all %}
+                    <div class="border p-3">
+                        <div class="media mb-4 ">
+                            <img class="d-flex mr-3 rounded-circle" width="32" height="32"
+                                 src="{{ obj.user.profile_pic.url }}" alt="">
+                            <div class="media-body">
+                                <h5 class="mt-0"><a href="{% url 'user:profile_page' obj.user.id %}">{{ obj.user.get_full_name }}</a></h5>
+                                {{ obj.comment }}
+                            </div>
+                            {{ obj.create_at|timesince }}
+                        </div>
+                        {% for inner_obj in obj.comment_image.all %}
+                            <center><img width="200" src="{{ inner_obj.image.url }}" alt=""></center>
+                        {% endfor %}
+                    </div>
+                    <hr>
+                {% endfor %}
+            </div>
+
+            <!-- Sidebar Widgets Column -->
+            <div class="col-md-4">
+
+                <!-- Search Widget -->
+                <div class="card my-4">
+                    <h5 class="card-header">Search</h5>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for...">
+                            <span class="input-group-append">
+                <button class="btn btn-secondary" type="button">Go!</button>
+              </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Categories Widget -->
+                <div class="card my-4">
+                    <h5 class="card-header">Categories</h5>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a href="#">Web Design</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">HTML</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Freebies</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <ul class="list-unstyled mb-0">
+                                    <li>
+                                        <a href="#">JavaScript</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">CSS</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Tutorials</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Widget -->
+                <div class="card my-4">
+                    <h5 class="card-header">Side Widget</h5>
+                    <div class="card-body">
+                        You can put anything you want inside of these side widgets. They are easy to use, and feature
+                        the new Bootstrap 4 card containers!
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <!-- /.row -->
+
+    </div>
+{% endblock %}
